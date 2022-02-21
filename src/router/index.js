@@ -1,15 +1,13 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    redirect:'rooms',
-    name: 'Home',
-    component: Home
+    redirect:'/chat/rooms',
+    
   },
   {
     path: '/about',
@@ -19,8 +17,15 @@ const routes = [
   {
     path: '/chat/rooms',
     name: 'rooms',
-    component: () => import('@/views/chat/Rooms.vue')
+    component: () => import('@/views/chat/ChatRoom.vue')
   },
+  {
+    path: '/chat/room',
+    name: 'room',
+    component: () => import('@/views/chat/Room.vue'),
+    props: true,
+  },
+
 ]
 
 const router = new VueRouter({
