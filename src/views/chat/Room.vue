@@ -10,7 +10,7 @@
 <script>
 import Stomp from 'webstomp-client'
 import SockJS from 'sockjs-client'
-
+import {serverWsURL,enterUrl,messageUrl,messageReciveUrl} from '@/util/WsUtil'
 export default {
   data(){ 
     return{
@@ -22,26 +22,28 @@ export default {
     }
   },
   created(){
+    
     console.log(this.$route.params.roomId);
     this.roomId=this.$route.params.roomId;
+    if(this.roomId===undefined) this.$router.push("rooms")
     this.connect()
   },
   methods:{
       connect() {
-      const serverURL = "http://10.10.1.82:8080/stomp/chat"
+      console.log(serverWsURL);
+
       var username = "eojin"
-      let socket = new SockJS(serverURL);
+      let socket = new SockJS(serverWsURL);
       this.stomp = Stomp.over(socket);
-      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`)
-      console.log(this.roomId)
-      var t = this;
+      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverWsURL}`)
+      console.log(this.stomp)
         //2. connection이 맺어지면 실행
-        this.stomp.connect({}, function (){
+        this.stomp.connect({}, () =>{
             console.log("STOMP Connection")
             // console.log(t.roomId)
 
             //4. subscribe(path, callback)으로 메세지를 받을 수 있음
-            t.stomp.subscribe("/sub/chat/room/" + t.roomId, function (chat) {
+            this.stomp.subscribe(messageReciveUrl + this.roomId,  chat => {
                 var content = JSON.parse(chat.body);
                 console.log(content)
                 var writer = content.writer;
@@ -52,8 +54,7 @@ export default {
                     str += "<div class='alert alert-secondary'>";
                     str += "<b>" + writer + " : " + message + "</b>";
                     str += "</div></div>";
-                    // $("#msgArea").append(str);
-                    t.msgArea+=str;
+                    this.msgArea+=str;
                 }
                 else{
                     str = "<div class='col-6'>";
@@ -61,20 +62,14 @@ export default {
                     str += "<b>" + writer + " : " + message + "</b>";
                     str += "</div></div>";
                     this.msgArea+=str;
-                    // $("#msgArea").append(str);
                 }
             });
-            console.log(1111);
-            console.log(t.stomp);
-            console.log(1111);
-            // console.log(JSON.stringify({roomId: t.roomId, writer: username}));
-            //3. send(path, header, message)로 메세지를 보낼 수 있음
-            t.stomp.send('/pub/chat/enter', JSON.stringify({roomId: t.roomId, writer: username}))
+            this.stomp.send(enterUrl, JSON.stringify({roomId: this.roomId, writer: username}))
         });
     },
     msgSend(){
       console.log(this.stomp);
-      this.stomp.send('/pub/chat/message',  JSON.stringify({roomId: this.roomId, message: this.message, writer: this.username}));
+      this.stomp.send(messageUrl,  JSON.stringify({roomId: this.roomId, message: this.message, writer: this.username}));
       this.message = '';
     }
   }
