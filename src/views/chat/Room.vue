@@ -40,12 +40,10 @@ export default {
         //2. connection이 맺어지면 실행
         this.stomp.connect({}, () =>{
             console.log("STOMP Connection")
-            // console.log(t.roomId)
 
             //4. subscribe(path, callback)으로 메세지를 받을 수 있음
             this.stomp.subscribe(messageReciveUrl + this.roomId,  chat => {
                 var content = JSON.parse(chat.body);
-                console.log(content)
                 var writer = content.writer;
                 var str = '';
                 var message = content.message;
