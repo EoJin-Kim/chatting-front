@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="m-2">
     <div v-html="msgArea"></div>
-    <textarea name="" id="" cols="30" rows="10"  v-model="message"></textarea>
+    <textarea name="" id="" cols="100" rows="4"  v-model="message"></textarea>
     <br>
     <button v-on:click="msgSend">메세지 전송</button>
   </div>
@@ -22,13 +22,27 @@ export default {
     }
   },
   created(){
-    
+    document.addEventListener('beforeunload', this.unLoadEvent)
     console.log(this.$route.params.roomId);
     this.roomId=this.$route.params.roomId;
     if(this.roomId===undefined) this.$router.push("rooms")
     this.connect()
   },
+  beforeDestroy(){
+    let message = `${this.username}님이 나가셨습니다`
+    this.stomp.send(messageUrl,  JSON.stringify({roomId: this.roomId, message: message, writer: this.username}));
+                
+    this.stomp.disconnect();
+
+  },
+
   methods:{
+      unLoadEvent(){
+        this.alertMsg();
+      },
+      alertMsg(){
+        alert(123);
+      },
       connect() {
       console.log(serverWsURL);
 
@@ -48,17 +62,11 @@ export default {
                 var str = '';
                 var message = content.message;
                 if(writer === username){
-                    str = "<div class='col-6'>";
-                    str += "<div class='alert alert-secondary'>";
-                    str += "<b>" + writer + " : " + message + "</b>";
-                    str += "</div></div>";
+                    str = this.myChat(writer,message)
                     this.msgArea+=str;
                 }
                 else{
-                    str = "<div class='col-6'>";
-                    str += "<div class='alert alert-warning'>";
-                    str += "<b>" + writer + " : " + message + "</b>";
-                    str += "</div></div>";
+                    str = this.otherChat(writer,message)
                     this.msgArea+=str;
                 }
             });
@@ -69,6 +77,20 @@ export default {
       console.log(this.stomp);
       this.stomp.send(messageUrl,  JSON.stringify({roomId: this.roomId, message: this.message, writer: this.username}));
       this.message = '';
+    },
+    myChat(writer,message){
+      let str = "<div class='col-6'>";
+      str += "<div class='alert bg-warning'>";
+      str += "<b>" + writer + " : " + message + "</b>";
+      str += "</div></div>";
+      return str;
+    },
+    otherChat(writer,message){
+      let str = "<div class='col-6'>";
+      str += "<div class='alert bg-primary'>";
+      str += "<b>" + writer + " : " + message + "</b>";
+      str += "</div></div>";
+      return str;
     }
   }
 }
