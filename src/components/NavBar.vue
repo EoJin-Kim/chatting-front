@@ -15,17 +15,34 @@
     <li class="nav-item">
       <router-link class="nav-link" to="/chat/rooms">Chat</router-link>
     </li>
+
+    <li class="nav-item">
+      <router-link class="nav-link" to="/user">일반사용자</router-link>
+    </li>
+    <li class="nav-item">
+      <router-link class="nav-link" to="/manager">매니저</router-link>
+    </li>
+    <li class="nav-item">
+      <router-link class="nav-link" to="/admin">관리자</router-link>
+    </li>
     
     
   </ul>
   </div>
   
   <div class="d-flex flex-row-reverse col-sm-5">
-      <form class="form-inline" action="/action_page.php">
-        <input class="custom-form-control mr-sm-2" type="text" placeholder="ID">
-        <input class="custom-form-control mr-sm-2" type="text" placeholder="PW">
-        <button class="btn btn-danger" type="submit">로그인</button>
-      </form>
+      <div class="form-inline">
+        <div v-if="loginCheck">
+          <p class=" mr-sm-2">{{getMemberInfo.name}}  </p>
+          <button class="btn btn-danger" v-on:click="logout">로그아웃</button>
+          
+        </div>
+        <div v-else>
+          <input class="custom-form-control mr-sm-2" type="text" placeholder="ID" v-model="email">
+          <input class="custom-form-control mr-sm-2" type="text" placeholder="PW" v-model="password">
+          <button class="btn btn-danger" v-on:click="login">로그인</button>
+        </div>
+      </div>
     </div>
 </nav>
     
@@ -36,8 +53,88 @@
 </template>
 
 <script>
+import {
+  axiosLogin,
+  getAxiosMemberInfo,  
+  } from '@/api/member'
+import { mapGetters } from 'vuex'
+import { mapMutations } from 'vuex'
+import {mapActions} from 'vuex';
 export default {
+  computed:{
+    ...mapGetters([
+      'getToken',
+      'loginCheck',
+      'getMemberInfo'
+    ]),
+  },
+  data(){
+    return{
+      email:"admin@admin.com",
+      password:"admin",
+      
+      
+    }
+  },
+  methods:{
+    async login(){
+      await axiosLogin(
+        {
+          email:this.email,
+          password:this.password,
+        },
+        (res)=>{
+          console.log(res);
+          console.log(this);
+          this.setLoginCheck(true);
+          this.setToken(res.token)
+        },
+        (err) => {
+          console.log(err,"failed");
+          this.setLoginCheck(false);
+        }
+      )
+      // await axiosLogin(
+      // {
+      //   email:this.email,
+      //   password:this.password,
+      // })
+      // .then(res=>{
+      //   this.loginCheck=true;
+      //   console.log(res)
+      // })
+      // .catch((err) => {
+      //   console.log(err,"failed");
+      // })
+      console.log(this.loginCheck);
+      if(this.loginCheck){
+        getAxiosMemberInfo(
+          this.getToken,
+          (res)=>{
+            console.log(res);
+            this.setMemberInfo(res)
+          },
+          (err) => {
+            console.log(err,"failed");
+            this.setLoginCheck(false);
+          }
+        )
+      }
+    },
+    logout(){
+      this.setLoginCheck(false);
+    },
+    ...mapActions([
+      'logoutAction',
+    ]),
+    ...mapMutations([
+      'setToken',
+      'setMemberInfo',
+      'setLoginCheck',
+      'setMemberInfo',
+    ])
 
+  }
 }
 </script>
 
@@ -58,5 +155,11 @@ export default {
        -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
           transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
-
+li{
+   list-style:none;
+}
+p{
+  color: white;
+  display: inline;
+}
 </style>

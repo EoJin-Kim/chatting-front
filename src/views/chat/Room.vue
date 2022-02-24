@@ -46,7 +46,6 @@ export default {
       connect() {
       console.log(serverWsURL);
 
-      var username = "eojin"
       let socket = new SockJS(serverWsURL);
       this.stomp = Stomp.over(socket);
       console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverWsURL}`)
@@ -61,7 +60,7 @@ export default {
                 var writer = content.writer;
                 var str = '';
                 var message = content.message;
-                if(writer === username){
+                if(writer === this.username){
                     str = this.myChat(writer,message)
                     this.msgArea+=str;
                 }
@@ -70,7 +69,7 @@ export default {
                     this.msgArea+=str;
                 }
             });
-            this.stomp.send(enterUrl, JSON.stringify({roomId: this.roomId, writer: username}))
+            this.stomp.send(enterUrl, JSON.stringify({roomId: this.roomId, writer: this.username}))
         });
     },
     msgSend(){

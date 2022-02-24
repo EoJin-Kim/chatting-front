@@ -25,6 +25,30 @@ const routes = [
     component: () => import('@/views/chat/Room.vue'),
     props: true,
   },
+  {
+    path: '/user',
+    name: 'user',
+    component: () => import('@/views/member/User.vue'),
+    props: true,
+  },
+  {
+    path: '/manager',
+    name: 'manager',
+    component: () => import('@/views/member/Manager.vue'),
+    props: true,
+  },
+  {
+    path: '/admin',
+    name: 'admin',
+    component: () => import('@/views/member/Admin.vue'),
+    props: true,
+  },
+  {
+    path: '/error',
+    name: 'error',
+    component: () => import('@/views/Error.vue'),
+    props: true,
+  },
 
 ]
 

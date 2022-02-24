@@ -1,13 +1,12 @@
 import axios from 'axios';
-
+import { setInterceptors } from '@/api/util/interceptors';
 var chatBackURL = "http://10.10.1.82:8080"
 
 function createAxios() {
-    return axios.create({
+    
+    let axiosService = axios.create({
       baseURL: chatBackURL,
-      // headers: {
-      //   'Content-type': 'application/json',
-      // },
     });
+    return setInterceptors(axiosService)
   }
 export const axiosService = createAxios();
