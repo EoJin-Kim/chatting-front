@@ -19,8 +19,8 @@ async function axiosLogin(data, callback, errorCallback) {
   //     }})
 }
 
-async function getAxiosMemberInfo(token,callback, errorCallback) {
-  axiosService.get("/api/member/info",{headers:{
+async function getAxiosLoginMemberInfo(token,callback, errorCallback) {
+  axiosService.get("/api/member/login/info",{headers:{
     'Authorization': "Bearer "+token,
   }})
   .then((res) =>{
@@ -29,9 +29,22 @@ async function getAxiosMemberInfo(token,callback, errorCallback) {
 
   .catch((err) =>{
       errorCallback(err);
-  }
-);
+  });
 }
+
+async function getAxiosMemberEmailInfo(email,token,callback, errorCallback) {
+  axiosService.get(`/api/member/info/${email}`,{headers:{
+    'Authorization': "Bearer "+token,
+  }})
+  .then((res) =>{
+      callback(res.data);
+  })
+
+  .catch((err) =>{
+      errorCallback(err);
+  });
+}
+
 
 async function axiosUserRoleCheck(token,callback, errorCallback) {
   axiosService.get("/api/role/user",{headers:{
@@ -74,7 +87,7 @@ async function axiosAdminRoleCheck(token, callback, errorCallback) {
 }
 
 async function getAxiosMemberList(token, callback, errorCallback) {
-  axiosService.get("/api/member",{headers:{
+  axiosService.get("/api/member/info",{headers:{
     'Authorization': "Bearer "+token,
   }})
   .then((res) =>{
@@ -85,12 +98,27 @@ async function getAxiosMemberList(token, callback, errorCallback) {
       errorCallback(err);
   });
 }
+async function axiosMemberRoleAlter(data,token, callback, errorCallback) {
+  // function axiosLogin(data) {
+  await axiosService.post("/api/role/alter",data,{headers:{
+      'Content-type': 'application/json',
+      'Authorization': "Bearer "+token,
+    }})
+  .then((res) =>{
+      callback(res.data);
+  })
+  .catch((err) =>{
+      errorCallback(err);
+  });
+}
 
 export{
   axiosLogin,
-  getAxiosMemberInfo,
+  getAxiosLoginMemberInfo,
   axiosUserRoleCheck,
   axiosManagerRoleCheck,
   axiosAdminRoleCheck,
   getAxiosMemberList,
+  getAxiosMemberEmailInfo,
+  axiosMemberRoleAlter,
 }

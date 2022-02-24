@@ -53,9 +53,10 @@
 </template>
 
 <script>
+import router from '@/router/index';
 import {
   axiosLogin,
-  getAxiosMemberInfo,  
+  getAxiosLoginMemberInfo,  
   } from '@/api/member'
 import { mapGetters } from 'vuex'
 import { mapMutations } from 'vuex'
@@ -88,6 +89,7 @@ export default {
           console.log(this);
           this.setLoginCheck(true);
           this.setToken(res.token)
+          router.push("/about")
         },
         (err) => {
           console.log(err,"failed");
@@ -108,7 +110,7 @@ export default {
       // })
       console.log(this.loginCheck);
       if(this.loginCheck){
-        getAxiosMemberInfo(
+        getAxiosLoginMemberInfo(
           this.getToken,
           (res)=>{
             console.log(res);
@@ -123,6 +125,7 @@ export default {
     },
     logout(){
       this.setLoginCheck(false);
+      this.setToken("")
     },
     ...mapActions([
       'logoutAction',

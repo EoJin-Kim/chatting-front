@@ -42,6 +42,21 @@ const routes = [
     name: 'admin',
     component: () => import('@/views/member/Admin.vue'),
     props: true,
+    redirect:'/admin/roleList',
+    children:[
+      {
+        path: 'roleList',
+        name: 'roleList',
+        component: () => import('@/components/member/MemberRoleList.vue'),
+        props: true,
+      },
+      {
+        path: 'alterRole',
+        name: 'alterRole',
+        component: () => import('@/components/member/MemberRoleAlter.vue'),
+        props: true,
+      },
+    ]
   },
   {
     path: '/error',

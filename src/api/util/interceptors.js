@@ -20,9 +20,12 @@ export function setInterceptors(axiosService) {
       // 서버에 요청을 보내고 나서 응답을 받기 전에 어떤 처리를 할 수 있다.
       return response;
     },
-    async function (error) {
-
-      if (error.response.data.status === 403) {
+    function (error) {
+      if (error.response.status === 401) {
+        console.log("401!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        router.push('/error');
+      } 
+      if (error.response.data.status === 403 || error.response.data.status === 401) {
         console.log("403!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         router.push('/error');
       } 

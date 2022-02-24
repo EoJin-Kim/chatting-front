@@ -1,36 +1,17 @@
 <template>
   <div>
-    Admin 페이지
+    관리자 페이지
+    <router-view></router-view>
   </div>
+  
+  
 </template>
 
 <script>
-import {axiosAdminRoleCheck} from '@/api/member'
-import { mapGetters } from 'vuex'
+// import {axiosAdminRoleCheck,getAxiosMemberInfo} from '@/api/member'
+// import { mapGetters } from 'vuex'
 export default {
-  data(){
-    return{
-      
-    }
-  },
-  created(){
-    axiosAdminRoleCheck(
-      this.getToken,
-      (res)=>{
-        console.log(res);
-        this.setToken(res.token)
-      },
-      (err) => {
-        console.log(err,"failed");
-      }
-    );
-    this.getMemberList();
-  },
-  computed:{
-    ...mapGetters([
-      'getToken'
-    ]),
-  },
+
 }
 </script>
 
